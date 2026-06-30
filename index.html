@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <!-- 設定視口，確保響應式(RWD)在手機上正確縮放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楊子立 | 個人作品集</title>
+    <!-- Google Fonts：Inter（英數）+ Noto Sans TC（中文），提升文字質感 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ============ 進場動畫：隨機亂碼解碼成 lizcyy.__ 後轉場 ============ -->
+    <div id="intro">
+        <span id="intro-text"></span>
+    </div>
+
+    <!-- ============ 左上：深／淺色主題切換 ============ -->
+    <button id="theme-toggle" class="icon-btn" aria-label="切換深淺色主題" title="切換深／淺色">
+        <!-- 太陽圖示（淺色主題時顯示） -->
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <!-- 月亮圖示（深色主題時顯示） -->
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- ============ 右上：中／英文語言切換 ============ -->
+    <button id="lang-toggle" class="icon-btn" aria-label="切換語言" title="切換中／英文">
+        <!-- 地球（翻譯）圖示 -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <!-- 顯示「將切換到的語言」，由 JS 更新 -->
+        <span id="lang-label">EN</span>
+    </button>
+
+    <!-- ============ 導覽列（毛玻璃 + 錨點平滑跳轉） ============ -->
+    <nav class="navbar" id="navbar">
+        <ul class="nav-links">
+            <li><a href="#about" data-zh="關於" data-en="About">關於</a></li>
+            <li><a href="#skills" data-zh="技能" data-en="Skills">技能</a></li>
+            <li><a href="#projects" data-zh="專案" data-en="Projects">專案</a></li>
+            <li><a href="#awards" data-zh="榮譽" data-en="Awards">榮譽</a></li>
+        </ul>
+    </nav>
+
+    <!-- 回到頂端按鈕 -->
+    <button id="to-top" aria-label="回到頂端" title="回到頂端">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <!-- ============ Hero Section & About Me 區塊 ============ -->
+    <!-- 使用 <section> 作為語意化容器，class="hero" 控制版面 -->
+    <section class="hero" id="about">
+        <!-- 數字雨動態背景：用 canvas 畫綠色數字由上往下流動 -->
+        <canvas class="matrix-bg"></canvas>
+
+        <!-- hero-inner 是 Flex 容器，負責「圖片 + 文字」的水平/垂直排列 -->
+        <!-- reveal-target：揭幕後讓內容由下浮現 -->
+        <div class="hero-inner reveal-target">
+
+            <!-- 左側：圓形個人照片區 -->
+            <div class="hero-photo">
+                <!-- 個人照片 -->
+                <img src="profile.jpg" alt="楊子立的個人照片">
+            </div>
+
+            <!-- 右側：文字介紹區 -->
+            <div class="hero-text">
+                <!-- 主標題（每段文字都帶中／英兩種版本，由 JS 切換） -->
+                <h1>
+                    <span class="name" data-zh="楊子立" data-en="Yang Zi-Li">楊子立</span>
+                    <span class="name-en" data-zh="(Yang Zi-Li)" data-en="">(Yang Zi-Li)</span>
+                    <span class="title-sub" data-zh="探索 AI 與邊緣運算的無限可能" data-en="Exploring the Infinite Possibilities of AI &amp; Edge Computing">探索 AI 與邊緣運算的無限可能</span>
+                </h1>
+
+                <!-- 副標題 / 簡介 -->
+                <p class="subtitle"
+                   data-zh="目前就讀國立雲林科技大學資訊管理系（人工智慧技優專班）二年級<br>曾經擔任微積分數學基礎課程助教。"
+                   data-en="2nd-year student, Dept. of Information Management (AI Talent Program), National Yunlin University of Science and Technology<br>Former Teaching Assistant for Calculus &amp; Fundamental Mathematics.">
+                    目前就讀國立雲林科技大學資訊管理系（人工智慧技優專班）二年級<br>
+                    曾經擔任微積分數學基礎課程助教。
+                </p>
+
+                <!-- 個人特質描述 -->
+                <p class="intro"
+                   data-zh="我擁有極強的獨立解決問題能力與冷靜思考的特質。在開發專案遇到技術瓶頸時，因為沒有學長或導師指導，我完全是靠著自學摸索，積極突破難關、完成實作。"
+                   data-en="I have strong independent problem-solving skills and a calm, analytical mindset. When facing technical bottlenecks during projects—without any senior or mentor to guide me—I relied entirely on self-learning, actively breaking through obstacles and completing the implementation myself.">
+                    我擁有極強的獨立解決問題能力與冷靜思考的特質。在開發專案遇到技術瓶頸時，
+                    因為沒有學長或導師指導，我完全是靠著自學摸索，積極突破難關、完成實作。
+                </p>
+
+                <!-- 數字亮點 -->
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-num">20<small>+</small></span>
+                        <span class="stat-label" data-zh="競賽獲獎" data-en="Awards">競賽獲獎</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">3</span>
+                        <span class="stat-label" data-zh="實作專案" data-en="Projects">實作專案</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num">2</span>
+                        <span class="stat-label" data-zh="專業證照" data-en="Certifications">專業證照</span>
+                    </div>
+                </div>
+
+                <!-- 基本資料 -->
+                <ul class="hero-facts">
+                    <li class="fact">
+                        <span class="fact-ico">📍</span>
+                        <span class="fact-text">
+                            <span class="fact-label" data-zh="所在地" data-en="Location">所在地</span>
+                            <span class="fact-value" data-zh="高雄 ‧ 雲林" data-en="Kaohsiung · Yunlin">高雄 ‧ 雲林</span>
+                        </span>
+                    </li>
+                    <li class="fact">
+                        <span class="fact-ico zodiac">♏</span>
+                        <span class="fact-text">
+                            <span class="fact-label" data-zh="星座" data-en="Zodiac">星座</span>
+                            <span class="fact-value">Scorpio</span>
+                        </span>
+                    </li>
+                    <li class="fact">
+                        <span class="fact-ico">🧩</span>
+                        <span class="fact-text">
+                            <span class="fact-label">MBTI</span>
+                            <span class="fact-value">ISFP</span>
+                        </span>
+                    </li>
+                    <li class="fact">
+                        <span class="fact-ico">🏸</span>
+                        <span class="fact-text">
+                            <span class="fact-label" data-zh="興趣" data-en="Interest">興趣</span>
+                            <span class="fact-value" data-zh="羽毛球" data-en="Badminton">羽毛球</span>
+                        </span>
+                    </li>
+                </ul>
+
+                <!-- 聯絡按鈕：用 Flexbox 橫向並排 -->
+                <div class="hero-contact">
+                    <a href="https://github.com/lizcyuu1028" class="hero-btn" target="_blank" rel="noopener" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                        </svg>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="mailto:shhsshhs135@gmail.com" class="hero-btn" aria-label="Email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <span>Email</span>
+                    </a>
+                    <a href="https://www.instagram.com/lizcyy.__/" class="hero-btn" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <span>IG</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ 專業技術與能力 區塊（CSS Grid） ============ -->
+    <section class="skills" id="skills">
+        <!-- 數字雨背景 -->
+        <canvas class="matrix-bg"></canvas>
+        <!-- 區塊標題 -->
+        <h2 class="section-title" data-zh="專業技術與能力" data-en="Skills &amp; Expertise">專業技術與能力</h2>
+
+        <!-- skills-grid 是 Grid 容器，負責三張卡片的響應式排列 -->
+        <div class="skills-grid">
+
+            <!-- 卡片 1：電路設計與硬體實作 -->
+            <div class="skill-card">
+                <!-- icon：晶片 / CPU -->
+                <div class="skill-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                        <rect x="9" y="9" width="6" height="6"></rect>
+                        <line x1="9" y1="1" x2="9" y2="4"></line>
+                        <line x1="15" y1="1" x2="15" y2="4"></line>
+                        <line x1="9" y1="20" x2="9" y2="23"></line>
+                        <line x1="15" y1="20" x2="15" y2="23"></line>
+                        <line x1="20" y1="9" x2="23" y2="9"></line>
+                        <line x1="20" y1="14" x2="23" y2="14"></line>
+                        <line x1="1" y1="9" x2="4" y2="9"></line>
+                        <line x1="1" y1="14" x2="4" y2="14"></line>
+                    </svg>
+                </div>
+                <h3 data-zh="電路設計與硬體實作" data-en="Circuit Design &amp; Hardware Implementation">電路設計與硬體實作</h3>
+                <ul>
+                    <li data-zh="PCB 電路板佈局設計" data-en="PCB layout design">PCB 電路板佈局設計</li>
+                    <li data-zh="電子元件焊接與組裝" data-en="Soldering &amp; assembly of components">電子元件焊接與組裝</li>
+                    <li data-zh="ESP32 / Raspberry Pi 5 開發" data-en="ESP32 / Raspberry Pi 5 development">ESP32 / Raspberry Pi 5 開發</li>
+                    <li data-zh="感測器整合與資料擷取" data-en="Sensor integration &amp; data acquisition">感測器整合與資料擷取</li>
+                </ul>
+            </div>
+
+            <!-- 卡片 2：深度學習與程式開發 -->
+            <div class="skill-card">
+                <!-- icon：神經網路節點 -->
+                <div class="skill-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </div>
+                <h3 data-zh="深度學習與程式開發" data-en="Deep Learning &amp; Programming">深度學習與程式開發</h3>
+                <ul>
+                    <li data-zh="Python / PyTorch" data-en="Python / PyTorch">Python / PyTorch</li>
+                    <li data-zh="時間序列預測模型（TCN、Transformers）" data-en="Time-series forecasting (TCN, Transformers)">時間序列預測模型（TCN、Transformers）</li>
+                    <li data-zh="資料前處理與模型優化" data-en="Data preprocessing &amp; model optimization">資料前處理與模型優化</li>
+                    <li data-zh="LLM 應用整合" data-en="LLM application integration">LLM 應用整合</li>
+                </ul>
+            </div>
+
+            <!-- 卡片 3：網頁前端 -->
+            <div class="skill-card">
+                <!-- icon：程式碼 -->
+                <div class="skill-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </div>
+                <h3 data-zh="網頁前端" data-en="Web Front-End">網頁前端</h3>
+                <ul>
+                    <li data-zh="HTML5 / CSS3" data-en="HTML5 / CSS3">HTML5 / CSS3</li>
+                    <li data-zh="RWD 響應式設計" data-en="Responsive (RWD) design">RWD 響應式設計</li>
+                    <li data-zh="Flexbox / Grid 版面" data-en="Flexbox / Grid layouts">Flexbox / Grid 版面</li>
+                    <li data-zh="JavaScript 互動效果" data-en="Interactive effects with JavaScript">JavaScript 互動效果</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ 精選實作專案 區塊 ============ -->
+    <!-- 外層 .projects 是 Block 排版：三個 <article> 由上往下自然垂直堆疊 -->
+    <section class="projects" id="projects">
+        <!-- 數字雨背景 -->
+        <canvas class="matrix-bg"></canvas>
+        <h2 class="section-title" data-zh="精選實作專案" data-en="Featured Projects">精選實作專案</h2>
+
+        <!-- 專案 1：左圖右文（預設方向 row） -->
+        <article class="project">
+            <div class="project-img">
+                <img src="project-motor.jpg" alt="工業 4.0 馬達預測性維護系統截圖">
+            </div>
+            <div class="project-info">
+                <h3 data-zh="工業 4.0 多模態馬達預測性維護系統"
+                    data-en="Industry 4.0 Multimodal Motor Predictive Maintenance System">工業 4.0 多模態馬達預測性維護系統</h3>
+                <p data-zh="結合邊緣運算與硬體整合的實作專案。底層硬體使用 ESP32 與 Raspberry Pi 5 搭載 Hailo-8 AI 加速晶片，整合震動與聲學感測器，並導入 LLM 生成維修指引，打造完整的工業監控與預測架構。"
+                   data-en="A hands-on project combining edge computing and hardware integration. The underlying hardware uses ESP32 and Raspberry Pi 5 with a Hailo-8 AI accelerator, integrating vibration and acoustic sensors, and incorporates an LLM to generate maintenance guidance—building a complete industrial monitoring and prediction architecture.">
+                    結合邊緣運算與硬體整合的實作專案。底層硬體使用 ESP32 與 Raspberry Pi 5
+                    搭載 Hailo-8 AI 加速晶片，整合震動與聲學感測器，並導入 LLM 生成維修指引，
+                    打造完整的工業監控與預測架構。
+                </p>
+            </div>
+        </article>
+
+        <!-- 專案 2：左文右圖（加 reverse → flex-direction: row-reverse） -->
+        <article class="project reverse">
+            <div class="project-img">
+                <img src="project-cmaq.png" alt="PM2.5 空氣品質預測模型截圖">
+            </div>
+            <div class="project-info">
+                <h3 data-zh="深度學習：PM2.5 空氣品質預測模型"
+                    data-en="Deep Learning: PM2.5 Air Quality Forecasting Model">深度學習：PM2.5 空氣品質預測模型</h3>
+                <p data-zh="針對 CMAQ 數據進行時間序列分析。在模型架構上，將學習目標從傳統的「學習偏差值（bias）」改為直接「學習觀測值（obs）」，成功解決活化函數與負值邊界的問題，進一步優化模型的預測準確度。"
+                   data-en="Time-series analysis on CMAQ data. In the model architecture, the learning target was changed from the conventional 'learning the bias' to directly 'learning the observed value (obs)', successfully resolving issues with activation functions and negative-value boundaries, and further improving prediction accuracy.">
+                    針對 CMAQ 數據進行時間序列分析。在模型架構上，將學習目標從傳統的
+                    「學習偏差值（bias）」改為直接「學習觀測值（obs）」，成功解決活化函數
+                    與負值邊界的問題，進一步優化模型的預測準確度。
+                </p>
+            </div>
+        </article>
+
+        <!-- 專案 3：左圖右文（預設方向 row） -->
+        <article class="project">
+            <div class="project-img">
+                <img src="project-circuit.jpg" alt="電路設計與硬體實作截圖">
+            </div>
+            <div class="project-info">
+                <h3 data-zh="電路設計與硬體實作"
+                    data-en="Circuit Design &amp; Hardware Implementation">電路設計與硬體實作</h3>
+                <p data-zh="具備 PCB 電路板佈局設計與實體電子元件焊接能力。能將邊緣運算架構從軟體環境實際落地，完成具備感測、運算與控制功能的實體硬體裝置。"
+                   data-en="Skilled in PCB layout design and hands-on soldering of electronic components. Able to bring an edge-computing architecture from a software environment into reality, building physical devices with sensing, computing, and control capabilities.">
+                    具備 PCB 電路板佈局設計與實體電子元件焊接能力。能將邊緣運算架構
+                    從軟體環境實際落地，完成具備感測、運算與控制功能的實體硬體裝置。
+                </p>
+            </div>
+        </article>
+    </section>
+
+    <!-- ============ 競賽經歷與榮譽 區塊（單欄垂直列表） ============ -->
+    <section class="awards" id="awards">
+        <!-- 數字雨背景 -->
+        <canvas class="matrix-bg"></canvas>
+        <h2 class="section-title" data-zh="競賽經歷與榮譽" data-en="Competitions &amp; Achievements">競賽經歷與榮譽</h2>
+
+        <!-- 子標題：大學階段 -->
+        <h3 class="awards-subtitle" data-zh="大學階段" data-en="University">大學階段</h3>
+
+        <!-- awards-list：用 Flexbox 直向排列，每個項目獨立一橫排 -->
+        <ul class="awards-list">
+
+            <li class="award-item">
+                <span class="award-year">2026</span>
+                <span class="award-name" data-zh="第四十屆日本東京創新天才國際發明展暨發明競賽" data-en="40th Japan Tokyo Genius International Invention Exhibition">第四十屆日本東京創新天才國際發明展暨發明競賽</span>
+                <span class="badge win" data-zh="金牌" data-en="Gold Medal">金牌</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2026</span>
+                <span class="award-name" data-zh="雲科三實競賽" data-en="YunTech San-Shi Competition">雲科三實競賽</span>
+                <span class="badge win" data-zh="金獎" data-en="Gold Award">金獎</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2026</span>
+                <span class="award-name" data-zh="ITSA 生成式 AI 應用網頁設計競賽" data-en="ITSA Generative-AI Web Design Competition">ITSA 生成式 AI 應用網頁設計競賽</span>
+                <span class="badge win" data-zh="第三名" data-en="3rd Place">第三名</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2026</span>
+                <span class="award-name" data-zh="全國電子設計創意競賽" data-en="National Electronic Design Creativity Competition">全國電子設計創意競賽</span>
+                <span class="badge win" data-zh="佳作" data-en="Honorable Mention">佳作</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="第三十九屆日本東京創新天才國際發明展暨發明競賽" data-en="39th Japan Tokyo Genius International Invention Exhibition">第三十九屆日本東京創新天才國際發明展暨發明競賽</span>
+                <span class="badge win" data-zh="金牌" data-en="Gold Medal">金牌</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="第三十九屆日本東京創新天才國際發明展暨發明競賽" data-en="39th Japan Tokyo Genius International Invention Exhibition">第三十九屆日本東京創新天才國際發明展暨發明競賽</span>
+                <span class="badge win" data-zh="特別獎" data-en="Special Award">特別獎</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="雲科三實競賽" data-en="YunTech San-Shi Competition">雲科三實競賽</span>
+                <span class="badge win" data-zh="金獎" data-en="Gold Award">金獎</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="教育部 智慧晶片系統應用創新專題實作競賽" data-en="MOE Smart-Chip System Application Innovation Project Competition">教育部 智慧晶片系統應用創新專題實作競賽</span>
+                <span class="badge win" data-zh="佳作（第六名）" data-en="Honorable Mention (6th)">佳作（第六名）</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="旺宏金矽獎" data-en="Macronix Golden Silicon Award">旺宏金矽獎</span>
+                <span class="badge part" data-zh="參賽" data-en="Participant">參賽</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="總統盃黑客松（民眾票選 13 高）" data-en="Presidential Hackathon (Public Vote Top-13)">總統盃黑客松（民眾票選 13 高）</span>
+                <span class="badge part" data-zh="參賽" data-en="Participant">參賽</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="第三十屆大專資訊服務競賽" data-en="30th College Information Service Competition">第三十屆大專資訊服務競賽</span>
+                <span class="badge part" data-zh="決賽" data-en="Finalist">決賽</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="雲林青年做好事競賽" data-en="Yunlin Youth Good-Deeds Competition">雲林青年做好事競賽</span>
+                <span class="badge part" data-zh="參賽" data-en="Participant">參賽</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="彰化師範大學 產學比賽" data-en="NCUE Industry-Academia Competition">彰化師範大學 產學比賽</span>
+                <span class="badge part" data-zh="決賽" data-en="Finalist">決賽</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="綠色生活比賽" data-en="Green Living Competition">綠色生活比賽</span>
+                <span class="badge part" data-zh="參賽" data-en="Participant">參賽</span>
+            </li>
+
+        </ul>
+
+        <!-- 子標題：高中階段 -->
+        <h3 class="awards-subtitle" data-zh="高中階段" data-en="High School">高中階段</h3>
+
+        <ul class="awards-list">
+
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="高雄市第 64 屆科學展覽會　電腦與資訊學科" data-en="64th Kaohsiung Science Fair — Computer &amp; Information Science">高雄市第 64 屆科學展覽會　電腦與資訊學科</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="校內科展　電腦與資訊學科" data-en="School Science Fair — Computer &amp; Information Science">校內科展　電腦與資訊學科</span>
+                <span class="badge win" data-zh="第二名" data-en="2nd Place">第二名</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="全國高級中等學校電機電子群專題實作與創意競賽" data-en="National Vocational High School Electrical-Electronics Project &amp; Creativity Competition">全國高級中等學校電機電子群專題實作與創意競賽</span>
+                <span class="badge win" data-zh="複賽佳作" data-en="Semifinal Mention">複賽佳作</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2025</span>
+                <span class="award-name" data-zh="校內專題" data-en="School Project">校內專題</span>
+                <span class="badge win" data-zh="佳作" data-en="Honorable Mention">佳作</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2023</span>
+                <span class="award-name" data-zh="高雄市第 63 屆科學展覽會　工程學科(一)" data-en="63rd Kaohsiung Science Fair — Engineering (I)">高雄市第 63 屆科學展覽會　工程學科(一)</span>
+                <span class="badge win" data-zh="第三名" data-en="3rd Place">第三名</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year">2023</span>
+                <span class="award-name" data-zh="校內科展　工程學科(一)" data-en="School Science Fair — Engineering (I)">校內科展　工程學科(一)</span>
+                <span class="badge win" data-zh="第三名" data-en="3rd Place">第三名</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year"></span>
+                <span class="award-name" data-zh="第 20 屆全國高級中等學校技術創造力競賽培訓活動" data-en="20th National High School Technical Creativity Competition Training">第 20 屆全國高級中等學校技術創造力競賽培訓活動</span>
+                <span class="badge part" data-zh="培訓" data-en="Training">培訓</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year"></span>
+                <span class="award-name" data-zh="第 22 屆旺宏科學獎競賽活動" data-en="22nd Macronix Science Award Competition">第 22 屆旺宏科學獎競賽活動</span>
+                <span class="badge part" data-zh="參賽" data-en="Participant">參賽</span>
+            </li>
+
+        </ul>
+
+        <!-- 子標題：專業證照（獨立一區） -->
+        <h3 class="awards-subtitle" data-zh="專業證照" data-en="Certifications">專業證照</h3>
+
+        <ul class="awards-list">
+
+            <li class="award-item">
+                <span class="award-year"></span>
+                <span class="award-name" data-zh="技能檢定：數位電子" data-en="Skill Certification: Digital Electronics">技能檢定：數位電子</span>
+                <span class="badge win" data-zh="乙級" data-en="Class B">乙級</span>
+            </li>
+            <li class="award-item">
+                <span class="award-year"></span>
+                <span class="award-name" data-zh="技能檢定：工業電子" data-en="Skill Certification: Industrial Electronics">技能檢定：工業電子</span>
+                <span class="badge win" data-zh="丙級" data-en="Class C">丙級</span>
+            </li>
+
+        </ul>
+    </section>
+
+    <!-- ============ 頁尾 Footer ============ -->
+    <footer class="footer">
+        <!-- 三個聯絡按鈕：用 Flexbox 水平置中 -->
+        <div class="footer-links">
+            <a href="https://github.com/lizcyuu1028" class="footer-btn" aria-label="GitHub" title="GitHub" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+                <span>GitHub</span>
+            </a>
+            <a href="mailto:shhsshhs135@gmail.com" class="footer-btn" aria-label="Email" title="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Email</span>
+            </a>
+            <a href="https://www.instagram.com/lizcyy.__/" class="footer-btn" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                <span>IG</span>
+            </a>
+        </div>
+
+        <!-- 版權聲明 -->
+        <p class="footer-copy" data-zh="© 2026 Yang Zi-Li. All rights reserved. 透過獨立自學與 AI 協作開發"
+           data-en="© 2026 Yang Zi-Li. All rights reserved. Built through independent self-learning and AI collaboration.">
+            © 2026 Yang Zi-Li. All rights reserved. 透過獨立自學與 AI 協作開發
+        </p>
+    </footer>
+
+    <!-- 數字雨背景動畫的 JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

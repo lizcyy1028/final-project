@@ -1,0 +1,1070 @@
+/* =========================================================
+   主題色彩變數（用 CSS 變數管理，才能一鍵切換深／淺色）
+   ========================================================= */
+
+/* 預設＝深色主題：所有顏色都集中在這裡定義 */
+:root {
+    --bg: #0d1117;                /* 全站背景 */
+    --text: #e6edf3;             /* 主要文字 */
+    --hero-grad: linear-gradient(135deg, #0d1117 0%, #161b29 60%, #0a0e16 100%);
+    --overlay: rgba(13, 17, 23, 0.3);   /* hero 數字雨上的半透明遮罩 */
+    --matrix-opacity: 0.7;       /* 數字雨不透明度 */
+    --skills-bg: #0a0e16;        /* 技能區背景 */
+    --card-bg: #161b29;          /* 卡片背景 */
+    --card-border: #232a3d;      /* 卡片邊框 */
+    --accent: #00e5ff;           /* 主題強調色（科技藍） */
+    --accent2: #7b5cff;          /* 漸層第二色（紫） */
+    --name-en: #8b949e;          /* 英文名灰色 */
+    --subtitle: #b0bac5;         /* 副標題文字 */
+    --intro: #d3dae3;            /* 介紹文字 */
+    --card-text: #c2cad6;        /* 卡片內文 */
+    /* 右上／左上 icon 按鈕 */
+    --btn-bg: rgba(22, 27, 41, 0.6);
+    --btn-border: #2a3346;
+    --btn-text: #e6edf3;
+    /* 毛玻璃（Glassmorphism）用：半透明底色 + 細邊框 */
+    --glass-bg: rgba(22, 27, 41, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* 淺色主題（米黃暖色系）：當 <body> 加上 class="light" 時，覆蓋上面的變數 */
+body.light {
+    --bg: #f5efe0;               /* 米黃背景 */
+    --text: #3a3322;             /* 暖棕色文字 */
+    --hero-grad: linear-gradient(135deg, #f7f2e6 0%, #efe6d2 60%, #f5efe0 100%);
+    --overlay: rgba(245, 239, 224, 0.3);   /* 米黃半透明遮罩 */
+    --matrix-opacity: 0.7;       /* 淺色時也保持足夠濃度，數字才看得清楚 */
+    --skills-bg: #efe7d4;        /* 技能區用稍深的米黃做區隔 */
+    --card-bg: #fdfaf2;          /* 卡片用更淺的米白 */
+    --card-border: #e2d8c1;      /* 暖色卡片邊框 */
+    --accent: #0088aa;           /* 淺底用較深的藍，確保對比 */
+    --accent2: #8a5a2b;          /* 暖棕色作為漸層第二色，搭配米黃 */
+    --name-en: #8a8064;
+    --subtitle: #5a5240;
+    --intro: #3f3829;
+    --card-text: #4a4232;
+    --btn-bg: rgba(253, 250, 242, 0.75);
+    --btn-border: #ddd0b6;
+    --btn-text: #3a3322;
+    /* 毛玻璃（米黃淺色版） */
+    --glass-bg: rgba(253, 250, 242, 0.55);
+    --glass-border: rgba(0, 0, 0, 0.07);
+}
+
+/* =========================================================
+   進場動畫（亂碼解碼成 lizcyy.__）
+   ========================================================= */
+
+/* 全螢幕覆蓋層，蓋在所有內容最上面 */
+#intro {
+    position: fixed;
+    inset: 0;                    /* top/right/bottom/left 都是 0 → 鋪滿整個視窗 */
+    z-index: 9999;               /* 最上層，蓋住主畫面與按鈕 */
+    display: flex;
+    align-items: center;         /* 文字垂直置中 */
+    justify-content: center;     /* 文字水平置中 */
+    background-color: #0d1117;   /* 深色底，營造科技解碼感 */
+    /* 轉場：整片黑幕向上滑開（揭幕感），用 cubic-bezier 做出俐落的加速度 */
+    transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* 加上 lift 後，整片黑幕往上滑出視窗外 */
+#intro.lift {
+    transform: translateY(-100%);
+}
+
+/* 解碼中的文字外觀 */
+#intro-text {
+    font-family: "Consolas", "Courier New", monospace;  /* 等寬字，亂碼感更明顯 */
+    font-size: clamp(2rem, 9vw, 4.5rem);  /* 隨螢幕縮放：手機小、電腦大 */
+    color: #00ff66;                       /* 科技綠 */
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 14px rgba(0, 255, 102, 0.6);  /* 綠色發光 */
+    white-space: nowrap;
+    /* 轉場：放大 + 模糊 + 淡出 */
+    transition: transform 0.6s ease, opacity 0.6s ease, filter 0.6s ease;
+}
+
+/* 加上 out 後，文字放大、模糊並淡出（黑幕滑開前先做） */
+#intro-text.out {
+    transform: scale(1.3);
+    opacity: 0;
+    filter: blur(6px);
+}
+
+/* 還在跳動、尚未鎖定的亂碼字元，顏色稍暗做出區別 */
+#intro-text .dud {
+    color: #1f9d57;
+    opacity: 0.85;
+}
+
+/* 主畫面內容進場：先在下方且透明，揭幕後緩緩浮現 */
+.reveal-target {
+    opacity: 0;
+    transform: translateY(40px);
+}
+.reveal-target.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s;
+}
+
+/* =========================================================
+   全域基礎設定
+   ========================================================= */
+
+/* 清除瀏覽器預設邊距，並讓 padding、border 計入元素寬度，方便排版 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 平滑捲動：點擊或捲動時頁面滑順移動 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 設定整體背景與字型，營造現代、乾淨的科技感 */
+body {
+    /* Inter 負責英數、Noto Sans TC 負責中文，最後保留系統字型為備援 */
+    font-family: "Inter", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+    /* 開啟字型平滑，文字邊緣更細緻 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 切換主題時，顏色平滑過渡，不會瞬間跳動 */
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* =========================================================
+   左上／右上 icon 切換按鈕
+   ========================================================= */
+
+/* 共用按鈕外觀 */
+.icon-btn {
+    position: fixed;             /* 固定在畫面角落，捲動也不會跑掉 */
+    top: 20px;
+    z-index: 100;               /* 浮在所有內容之上 */
+    display: inline-flex;
+    align-items: center;        /* icon 與文字垂直置中 */
+    gap: 7px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: 1px solid var(--btn-border);
+    border-radius: 999px;       /* 膠囊／圓形外觀 */
+    cursor: pointer;
+    backdrop-filter: blur(6px); /* 毛玻璃效果 */
+    transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 滑鼠移過時，邊框與圖示變成主題色並發光 */
+.icon-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0, 200, 255, 0.35);
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+/* 左上：主題切換（圓形） */
+#theme-toggle {
+    left: 20px;
+    padding: 10px;
+}
+
+/* 右上：語言切換（膠囊，含文字） */
+#lang-toggle {
+    right: 20px;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* 太陽／月亮圖示：依主題只顯示其中一個
+   （選擇器多加 .icon-btn 提高優先級，才能蓋過上面 .icon-btn svg 的 display:block） */
+.icon-btn .icon-sun { display: none; }     /* 深色：不顯示太陽 */
+.icon-btn .icon-moon { display: block; }   /* 深色：只顯示月亮 */
+body.light .icon-btn .icon-sun { display: block; }  /* 淺色：只顯示太陽 */
+body.light .icon-btn .icon-moon { display: none; }  /* 淺色：不顯示月亮 */
+
+/* =========================================================
+   Hero Section 區塊
+   ========================================================= */
+
+/* hero 是最外層區塊：負責整頁的背景與最小高度（撐滿一個螢幕） */
+.hero {
+    position: relative;         /* 作為 canvas 絕對定位的基準 */
+    overflow: hidden;           /* 超出範圍的數字雨裁掉，不外溢 */
+    min-height: 100vh;          /* 至少佔滿一整個螢幕高度 */
+    background: var(--hero-grad);
+    padding: 40px 24px;         /* 上下、左右留白，避免內容貼邊 */
+
+    /* --- 用 Flexbox 讓整個 hero-inner 在畫面中「水平 + 垂直置中」 --- */
+    display: flex;
+    justify-content: center;    /* 主軸(水平)置中：讓內容在左右方向居中 */
+    align-items: center;        /* 交叉軸(垂直)置中：讓內容在上下方向居中 */
+}
+
+/* 數字雨 canvas：鋪滿所在區塊，墊在內容的最底層 */
+.matrix-bg {
+    position: absolute;         /* 相對所在區塊定位 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;                 /* 最底層 */
+    opacity: var(--matrix-opacity);  /* 不透明度（依主題變化） */
+    pointer-events: none;       /* 不擋住內容互動 */
+}
+
+/* 讓各區塊的內容浮在數字雨之上（canvas 是 z-index:0，內容設 1 才不會被蓋住） */
+.skills > .section-title,
+.skills > .skills-grid,
+.projects > .section-title,
+.projects > .project,
+.awards > .section-title,
+.awards > .awards-subtitle,
+.awards > .awards-list {
+    position: relative;
+    z-index: 1;
+}
+
+/* 在數字雨與文字之間，加一層半透明遮罩，讓文字更清楚 */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay);
+    z-index: 1;                 /* 蓋在 canvas(0) 之上 */
+}
+
+/* 讓文字與照片內容浮在數字雨與遮罩的最上方 */
+.hero-inner {
+    position: relative;
+    z-index: 2;                 /* 高於 canvas(0) 與遮罩(1)，確保內容最清楚 */
+}
+
+/* hero-inner 是「圖片 + 文字」的 Flex 容器，這裡是排版核心 */
+.hero-inner {
+    display: flex;              /* 啟用 Flexbox */
+    flex-direction: row;        /* 主軸方向＝水平，因此子元素「左右排列」(圖左、文字右) */
+    align-items: center;        /* 交叉軸(垂直)置中：讓圖片與文字在垂直方向對齊中線 */
+    justify-content: center;    /* 主軸(水平)置中：整組內容在水平方向居中 */
+    gap: 60px;                  /* 圖片與文字之間的間距 */
+    max-width: 1100px;          /* 限制最大寬度，避免在大螢幕上過度拉寬 */
+    width: 100%;
+}
+
+/* -------- 左側：圓形照片 -------- */
+.hero-photo {
+    flex-shrink: 0;            /* 禁止圖片被壓縮，保持固定大小 */
+}
+
+.hero-photo img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;        /* 50% 圓角 → 正方形變成圓形 */
+    object-fit: cover;         /* 圖片填滿圓形區域不變形 */
+    border: 4px solid var(--accent); /* 主題色邊框 */
+    /* 發光陰影，強化科技感 */
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.35);
+}
+
+/* -------- 右側：文字介紹 -------- */
+.hero-text {
+    max-width: 560px;          /* 限制文字行寬，提升可讀性 */
+}
+
+/* 主標題 */
+.hero-text h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 20px;
+}
+
+/* 主標題中的英文名，稍微弱化 */
+.name-en {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--name-en);
+}
+
+/* 標題第二行（科技感漸層色文字） */
+.title-sub {
+    display: block;            /* 換到下一行 */
+    font-size: 1.5rem;
+    margin-top: 10px;
+    /* 用漸層 + 背景剪裁，做出彩色發光的科技感文字 */
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 副標題 */
+.subtitle {
+    font-size: 1.05rem;
+    color: var(--subtitle);
+    margin-bottom: 18px;
+}
+
+/* 個人特質描述 */
+.intro {
+    font-size: 1.05rem;
+    color: var(--intro);
+    /* 左側加一條高對比色條，當作引言重點 */
+    border-left: 3px solid var(--accent);
+    padding-left: 16px;
+}
+
+/* 聯絡按鈕列：用 Flexbox 讓三顆按鈕橫向並排 */
+.hero-contact {
+    display: flex;
+    gap: 14px;                  /* 按鈕之間的間距 */
+    margin-top: 26px;           /* 與上方文字保持距離 */
+    flex-wrap: wrap;            /* 空間不夠時自動換行 */
+}
+
+/* 單顆聯絡按鈕 */
+.hero-btn {
+    display: inline-flex;
+    align-items: center;        /* icon 與文字垂直置中 */
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 999px;       /* 圓角膠囊 */
+    background: var(--accent);  /* 背景色（主題色） */
+    color: #0d1117;             /* 深色文字，與亮底高對比 */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    /* 過渡動畫，讓 hover 變化平滑 */
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.hero-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 滑鼠移過：變色 + 微放大 + 發光 */
+.hero-btn:hover {
+    background: var(--accent2);
+    transform: scale(1.06);
+    box-shadow: 0 6px 18px rgba(0, 229, 255, 0.3);
+}
+
+/* =========================================================
+   響應式(RWD)：手機版佈局（螢幕寬度 ≤ 768px）
+   ========================================================= */
+@media (max-width: 768px) {
+
+    /* 將 Flex 主軸改為「垂直方向」，子元素就會由「左右排列」變成「上下排列」 */
+    .hero-inner {
+        flex-direction: column;   /* 主軸＝垂直 → 圖片在上、文字在下 */
+        align-items: center;      /* 交叉軸(此時為水平)置中：讓圖片與文字水平居中 */
+        text-align: center;       /* 文字也置中對齊 */
+        gap: 32px;                /* 縮小上下間距 */
+    }
+
+    /* 手機上縮小照片尺寸 */
+    .hero-photo img {
+        width: 220px;
+        height: 220px;
+    }
+
+    /* 手機上縮小標題字級，避免過大破版 */
+    .hero-text h1 {
+        font-size: 1.9rem;
+    }
+
+    .title-sub {
+        font-size: 1.25rem;
+    }
+
+    /* 置中對齊時，引言色條改為置中、不靠左 */
+    .intro {
+        border-left: none;
+        padding-left: 0;
+        border-top: 3px solid var(--accent);
+        padding-top: 12px;
+    }
+
+    /* 手機版：聯絡按鈕跟著文字一起置中對齊 */
+    .hero-contact {
+        justify-content: center;
+    }
+}
+
+/* =========================================================
+   專業技術與能力 區塊（CSS Grid 排版）
+   ========================================================= */
+
+/* 區塊外層：控制背景與整體留白 */
+.skills {
+    position: relative;          /* 作為數字雨 canvas 的定位基準 */
+    overflow: hidden;            /* 裁掉超出區塊的數字雨 */
+    background-color: var(--skills-bg);
+    padding: 80px 24px;          /* 上下大留白、左右安全邊距 */
+    transition: background-color 0.4s ease;
+}
+
+/* 區塊大標題 */
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 50px;
+    /* 漸層科技感文字，與首頁標題風格一致 */
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* -------- Grid 容器：三張卡片的排版核心 -------- */
+.skills-grid {
+    display: grid;               /* 啟用 CSS Grid 排版 */
+
+    /*
+       grid-template-columns 決定「有幾欄、每欄多寬」。
+       這裡的預設值是電腦版：
+       repeat(3, 1fr) = 重複 3 欄，每欄各佔 1 個彈性單位(fr)，
+       也就是把容器寬度平均切成 3 等份 → 三張卡片並排。
+       想改欄數時，只要改 repeat() 裡的「3」這個數字即可。
+    */
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 28px;                   /* 卡片與卡片之間的間距（行、列都套用） */
+    max-width: 1100px;           /* 限制最大寬度，避免大螢幕被拉太寬 */
+    margin: 0 auto;              /* 讓整個 Grid 在頁面水平置中 */
+}
+
+/* -------- 技能卡片外觀 -------- */
+.skill-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;                /* 圓角 */
+    padding: 30px 26px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);  /* 微小陰影，讓卡片浮在背景上 */
+
+    /* 設定過渡動畫，讓 hover 的變化是「平滑」的，而不是瞬間跳動 */
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.4s ease;
+}
+
+/* 滑鼠移過卡片時的互動效果 */
+.skill-card:hover {
+    transform: translateY(-8px);        /* 向上位移 8px → 微微浮起 */
+    border-color: var(--accent);        /* 邊框變成主題色 */
+    /* 加上藍色發光陰影，強化科技感 */
+    box-shadow: 0 12px 28px rgba(0, 229, 255, 0.25);
+}
+
+/* 卡片上方的 icon 方塊 */
+.skill-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;            /* icon 在方塊內水平垂直置中 */
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(0, 229, 255, 0.1);  /* 淡淡的主題色底 */
+    color: var(--accent);           /* SVG 用 currentColor，因此會變主題色 */
+    margin-bottom: 18px;
+}
+.skill-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+/* 卡片小標題 */
+.skill-card h3 {
+    font-size: 1.2rem;
+    color: var(--accent);               /* 高對比主題色 */
+    margin-bottom: 16px;
+}
+
+/* 卡片內的條列清單 */
+.skill-card ul {
+    list-style: none;               /* 移除預設圓點，改用自訂符號 */
+}
+.skill-card li {
+    position: relative;
+    padding-left: 22px;             /* 留空間給左側自訂符號 */
+    margin-bottom: 11px;
+    font-size: 0.97rem;
+    color: var(--card-text);
+    line-height: 1.6;
+}
+/* 每一項前面加一個主題色箭頭符號 */
+.skill-card li::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+.skill-card li:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================================================
+   專業技術區塊的響應式(RWD)
+   ========================================================= */
+
+/*
+   平板版：螢幕寬度介於 768px ~ 1024px。
+   把欄數從 3 改成 2 → 卡片變兩兩並排，第三張自動換到下一列。
+*/
+@media (min-width: 768px) and (max-width: 1024px) {
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);  /* 2 欄 */
+    }
+}
+
+/*
+   手機版：螢幕寬度小於 768px。
+   把欄數改成 1 → 卡片由上往下單欄排列。
+   repeat(1, 1fr) 也可以直接寫成 1fr，效果相同。
+*/
+@media (max-width: 767px) {
+    .skills-grid {
+        grid-template-columns: 1fr;             /* 1 欄 */
+    }
+}
+
+/* =========================================================
+   精選實作專案 區塊
+   ========================================================= */
+
+/* 外層區塊：Block 排版的容器（負責背景與整體留白） */
+.projects {
+    position: relative;          /* 作為數字雨 canvas 的定位基準 */
+    overflow: hidden;            /* 裁掉超出區塊的數字雨 */
+    background-color: var(--bg);
+    padding: 80px 24px;
+    transition: background-color 0.4s ease;
+}
+
+/*
+   每個專案 .project 是 <article>（區塊元素）。
+   在 .projects 裡，這些 article 依「Block 預設排版」由上往下垂直堆疊。
+   用 margin 在專案之間留出間距，並用 max-width + auto 置中。
+*/
+.project {
+    max-width: 1000px;
+    margin: 0 auto 60px;          /* 下方 60px 間距，水平置中 */
+
+    /* 內層用 Flexbox：讓「圖片」與「文字說明」左右並排 */
+    display: flex;
+    flex-direction: row;          /* 預設方向：主軸水平 → 圖在左、文字在右 */
+    align-items: center;          /* 交叉軸(垂直)置中：圖片與文字對齊中線 */
+    gap: 40px;                    /* 圖片與文字之間的間距 */
+}
+
+/* 最後一個專案不需要下方間距 */
+.project:last-child {
+    margin-bottom: 0;
+}
+
+/*
+   ★ 左右交錯排版的關鍵 ★
+   預設 .project 是 flex-direction: row（圖左、文字右）。
+   只要對「要相反」的專案加上 .reverse，把方向改成 row-reverse，
+   Flexbox 就會把子元素的排列順序左右對調 → 變成「文字左、圖片右」。
+   （HTML 順序不用動，純粹靠 CSS 切換視覺左右，這就是交錯排版的做法。）
+*/
+.project.reverse {
+    flex-direction: row-reverse;
+}
+
+/* 圖片區與文字區各佔一半（flex: 1 → 平均分配剩餘空間） */
+.project-img {
+    flex: 1;
+}
+
+.project-info {
+    flex: 1;
+}
+
+/* 圖片：寬度填滿容器並自動縮放，加圓角與陰影 */
+.project-img img {
+    width: 100%;
+    height: auto;                 /* 高度依比例自動，避免變形 */
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 專案標題 */
+.project-info h3 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+
+/* 專案說明文字 */
+.project-info p {
+    font-size: 1rem;
+    color: var(--card-text);
+    line-height: 1.85;
+}
+
+/* -------- 精選專案的響應式(RWD)：手機版（≤ 768px） -------- */
+@media (max-width: 768px) {
+
+    /*
+       把主軸方向改成「垂直」，圖片與文字就從「左右並排」變成「上下堆疊」。
+       注意：交錯的 .reverse 也一併覆蓋成 column，
+       這樣三個專案在手機上統一都是「圖片在上、文字在下」。
+    */
+    .project,
+    .project.reverse {
+        flex-direction: column;   /* 主軸＝垂直 → 圖上、文字下 */
+        gap: 20px;
+    }
+
+    /* 圖片寬度本來就是 100%，在窄螢幕下會自動縮放適應 */
+    .project-info h3 {
+        font-size: 1.25rem;
+    }
+}
+
+/* =========================================================
+   競賽經歷與榮譽 區塊（榮譽卡片牆）
+   ========================================================= */
+
+.awards {
+    position: relative;          /* 作為數字雨 canvas 的定位基準 */
+    overflow: hidden;            /* 裁掉超出區塊的數字雨 */
+    background-color: var(--skills-bg);
+    padding: 80px 24px;
+    transition: background-color 0.4s ease;
+}
+
+/* 階段子標題（大學 / 高中） */
+.awards-subtitle {
+    max-width: 860px;
+    margin: 0 auto 18px;
+    font-size: 1.3rem;
+    color: var(--text);
+    border-left: 4px solid var(--accent);  /* 左側醒目色條 */
+    padding-left: 12px;
+}
+/* 第二個子標題上方多留一點間距，和上一組列表分開 */
+.awards-list + .awards-subtitle {
+    margin-top: 48px;
+}
+
+/* -------- 單欄垂直列表：Flexbox column -------- */
+.awards-list {
+    max-width: 860px;
+    margin: 0 auto;
+    list-style: none;            /* 移除預設項目符號 */
+    display: flex;
+    flex-direction: column;      /* 直向排列：每個項目獨立一橫排，由上往下 */
+}
+
+/* 單一經歷項目：一橫排（年份 + 名稱 + 獎項標籤），用底線分隔 */
+.award-item {
+    display: flex;
+    align-items: center;         /* 三個元素垂直置中對齊 */
+    gap: 16px;
+    padding: 16px 8px;
+    border-bottom: 1px solid var(--card-border);  /* 項目之間的分隔線 */
+    transition: background-color 0.2s ease;
+}
+/* 滑鼠移過該排時淡淡高亮 */
+.award-item:hover {
+    background-color: rgba(0, 229, 255, 0.05);
+}
+
+/* 年份：固定寬度欄、醒目主題色（證照/培訓類沒有年份則留白對齊） */
+.award-year {
+    width: 54px;
+    flex-shrink: 0;              /* 不被壓縮，維持對齊 */
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 1.05rem;
+}
+
+/* 競賽名稱：佔據中間剩餘空間，字體放大提升閱讀性 */
+.award-name {
+    flex: 1;
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* =========================================================
+   ★ 獎項標籤 Badge（重點）★
+   做法：用一個 <span> 當標籤，給它
+   ① 內距 padding + 圓角 border-radius → 膠囊外型
+   ② 粗體 font-weight + 不換行 white-space:nowrap → 看起來像徽章
+   再用「兩種 class」做出強弱區別：
+   .win  = 有實質名次（金牌/金獎/名次/證照）→ 高對比漸層底 + 深色字，最醒目
+   .part = 僅參賽/培訓/活動 → 透明底 + 細邊框，低調，與得獎明顯區隔
+   ========================================================= */
+.badge {
+    flex-shrink: 0;
+    padding: 5px 14px;
+    border-radius: 999px;        /* 圓角膠囊 */
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;         /* 標籤文字不換行 */
+}
+
+/* 得獎標籤：紅底白字（最醒目） */
+.badge.win {
+    background: #e23636;
+    color: #ffffff;
+}
+
+/* 參賽/培訓標籤：透明底 + 細邊框（低調） */
+.badge.part {
+    background: transparent;
+    color: var(--card-text);
+    border: 1px solid var(--card-border);
+}
+
+/* -------- 榮譽列表的響應式(RWD)：手機版（< 768px） -------- */
+@media (max-width: 767px) {
+    .awards-subtitle,
+    .awards-list {
+        max-width: 100%;
+    }
+
+    /* 允許換行：年份與標籤排第一行，名稱換到下一行整排顯示 */
+    .award-item {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding: 14px 2px;
+    }
+    .award-year {
+        order: 1;                /* 第一行：年份靠左 */
+    }
+    .badge {
+        order: 1;
+        margin-left: auto;       /* 第一行：標籤推到最右 */
+    }
+    .award-name {
+        order: 2;                /* 第二行：名稱獨佔整排 */
+        flex: 1 1 100%;
+        font-size: 1rem;         /* 手機字體微調 */
+    }
+}
+
+/* =========================================================
+   頁尾 Footer
+   ========================================================= */
+
+.footer {
+    background-color: #0a0e16;   /* 固定深色頁尾 */
+    color: #c2cad6;
+    padding: 50px 24px;
+
+    /* 用 Flexbox 讓內容（按鈕列 + 版權）整體置中 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;         /* 水平置中 */
+    gap: 24px;
+}
+
+/* 三個聯絡按鈕：Flexbox 水平排列並置中 */
+.footer-links {
+    display: flex;
+    justify-content: center;     /* 主軸(水平)置中 */
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;             /* 空間不夠時自動換行 */
+}
+
+/* 單顆聯絡按鈕 */
+.footer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid #2a3346;
+    border-radius: 999px;        /* 膠囊外型 */
+    color: #c2cad6;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.footer-btn svg {
+    width: 18px;
+    height: 18px;
+}
+/* hover 時變主題色並發光 */
+.footer-btn:hover {
+    color: #00e5ff;
+    border-color: #00e5ff;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+}
+
+/* 版權聲明 */
+.footer-copy {
+    font-size: 0.85rem;
+    color: #7a8699;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* 手機版：聯絡按鈕改為垂直置中排列 */
+@media (max-width: 767px) {
+    .footer-links {
+        flex-direction: column;   /* 垂直排列 */
+        align-items: center;      /* 垂直置中 */
+    }
+    .footer-btn {
+        width: 180px;
+        justify-content: center;
+    }
+}
+
+/* =========================================================
+   ★ 全面視覺升級（毛玻璃 / 捲動淡入 / 強化互動 / 呼吸感）★
+   放在檔案最後，靠 CSS「後者覆蓋前者」的特性微調既有樣式
+   ========================================================= */
+
+/* -------- 1. 呼吸感：加大區塊上下留白、標題間距 -------- */
+.skills,
+.projects,
+.awards {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+.section-title {
+    font-size: 2.4rem;
+    letter-spacing: 0.015em;
+    margin-bottom: 60px;
+}
+
+/* -------- 2. 捲動進場淡入（Micro-interaction）--------
+   .reveal 由 JS 動態加上：先隱藏並下移，進入視窗後加 .reveal-in 浮現。
+   若瀏覽器不支援，元素不會被加上 .reveal，仍正常顯示（fail-safe）。 */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.reveal.reveal-in {
+    opacity: 1;
+    transform: none;
+}
+/* 技能卡片登場時間錯開，更有層次（stagger） */
+.skills-grid .skill-card:nth-child(2) { transition-delay: 0.08s; }
+.skills-grid .skill-card:nth-child(3) { transition-delay: 0.16s; }
+
+/* -------- 3. 毛玻璃技能卡片（Glassmorphism）--------
+   半透明底 + backdrop-filter 模糊，讓後方的數字雨透出朦朧光暈 */
+.skill-card {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    padding: 34px 30px;          /* 卡片內距加大，更透氣 */
+    /* 統一 transition：同時涵蓋淡入(opacity)與 hover(transform/box-shadow)，避免互相覆蓋 */
+    transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.4s ease,
+                border-color 0.3s ease,
+                background-color 0.4s ease,
+                opacity 0.6s ease;
+}
+/* 強化 hover：浮起更明顯 + 柔和光暈 + 內描邊高光 */
+.skill-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 22px 44px rgba(0, 229, 255, 0.18),
+                inset 0 0 0 1px rgba(0, 229, 255, 0.25);
+}
+
+/* -------- 4. 榮譽列表也做成毛玻璃面板 -------- */
+.awards-list {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    backdrop-filter: blur(10px) saturate(130%);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 6px 24px;
+}
+.award-item:last-child {
+    border-bottom: none;         /* 面板內最後一列不畫分隔線 */
+}
+
+/* -------- 5. 專案圖片 hover 微放大 + 光暈 -------- */
+.project-img img {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.project:hover .project-img img {
+    transform: scale(1.02);
+    box-shadow: 0 18px 44px rgba(0, 229, 255, 0.20);
+}
+
+/* -------- 6. 主標題加一點柔光，強化科技感 -------- */
+.title-sub {
+    filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.25));
+}
+
+/* 尊重「減少動態」偏好設定的使用者：關閉進場與平滑捲動 */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+}
+
+/* =========================================================
+   導覽列 Navbar（毛玻璃膠囊 + 錨點平滑跳轉 + 目前區塊高亮）
+   ========================================================= */
+.navbar {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);   /* 水平置中固定在頂端 */
+    z-index: 90;                    /* 在內容之上、進場動畫(9999)與角落按鈕(100)之下 */
+    padding: 7px 9px;
+    border-radius: 999px;          /* 膠囊外型 */
+    background: var(--glass-bg);    /* 毛玻璃 */
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.nav-links {
+    display: flex;                 /* Flexbox 橫向排列導覽項目 */
+    list-style: none;
+    gap: 4px;
+}
+.nav-links a {
+    display: block;
+    padding: 8px 18px;
+    border-radius: 999px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: color 0.25s ease, background-color 0.25s ease;
+}
+/* hover 或目前所在區塊：主題色 + 淡底高亮 */
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--accent);
+    background: rgba(0, 229, 255, 0.12);
+}
+
+/* 手機版（≤ 600px）：隱藏導覽列，避免和角落按鈕擠在一起 */
+@media (max-width: 600px) {
+    .navbar { display: none; }
+}
+
+/* =========================================================
+   回到頂端按鈕
+   ========================================================= */
+#to-top {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    z-index: 90;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #0d1117;
+    cursor: pointer;
+    /* 預設隱藏，捲動一段距離後才淡入 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+    box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35);
+}
+#to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+#to-top:hover {
+    background: var(--accent2);
+    transform: translateY(-3px);
+}
+#to-top svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* =========================================================
+   關於我補充：數字亮點 + 基本資料
+   ========================================================= */
+
+/* -------- 數字亮點 -------- */
+.hero-stats {
+    display: flex;
+    gap: 30px;
+    margin: 26px 0 22px;
+}
+.stat { display: flex; flex-direction: column; }
+.stat-num {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--accent);            /* 大數字用主題色，最吸睛 */
+    line-height: 1.1;
+}
+.stat-num small { font-size: 1.1rem; }
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--subtitle);
+    margin-top: 2px;
+}
+
+/* -------- 基本資料（2 欄） -------- */
+.hero-facts {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 兩欄並排 */
+    gap: 12px 24px;
+    margin-bottom: 26px;
+}
+.fact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+/* icon 小方塊 */
+.fact-ico {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    border-radius: 9px;
+    background: rgba(0, 229, 255, 0.1);
+}
+/* 星座符號 ♏ 用主題色，讓它像一個發光的 icon */
+.fact-ico.zodiac { color: var(--accent); font-size: 1.35rem; }
+
+.fact-text { display: flex; flex-direction: column; line-height: 1.25; }
+.fact-label { font-size: 0.75rem; color: var(--subtitle); }
+.fact-value { font-size: 0.98rem; font-weight: 600; color: var(--text); }
+
+/* -------- 手機版（≤768px）：置中對齊 -------- */
+@media (max-width: 768px) {
+    .hero-stats { justify-content: center; }
+    .hero-facts {
+        grid-template-columns: 1fr;    /* 改單欄 */
+        justify-items: center;
+    }
+    .fact { justify-content: center; }
+}
